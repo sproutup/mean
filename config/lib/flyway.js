@@ -1,16 +1,25 @@
 'use strict';
 
-var exec = require('child_process').exec;
+var config = require('../config'),
+  exec = require('child_process').exec;
+
+var host = config.knex.connection.host;
+var database = config.knex.connection.database;
+var user = config.knex.connection.user;
+var password = config.knex.connection.password;
+
 
 // migrates
 module.exports.migrate = function () {
-  exec('flyway --help',
-    function (error, stdout, stderr) {
-      console.log('stdout: ' + stdout);
-      console.log('stderr: ' + stderr);
-      if (error !== null) {                                    console.log('exec error: ' + error);
+  var cmd = 'config/lib/flyway/flyway migrate -url=jdbc:mysql://'+host+':3306/'+database+' -user='+user+' -password='+password;
+//  var cmd = 'pwd';
+  exec(cmd,
+    function (err, stdout, stderr) {
+      if(err){
+        console.log('error: ' + err);
       }
+
+      console.log('stdout: ' + stdout);
   });
 };
-
 
